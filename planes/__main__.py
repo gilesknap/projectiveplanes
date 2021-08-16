@@ -5,6 +5,7 @@ from typing import Optional
 import typer
 
 from planes import __version__
+from planes.projective import project
 
 cli = typer.Typer()
 
@@ -25,7 +26,7 @@ def main(
         help="Print the version of planes and exit",
     )
 ):
-    """Do 3 things..."""
+    """Do stuff ..."""
 
 
 @cli.command()
@@ -37,6 +38,7 @@ def generate(
     Columns represent points (or Dobble symbols)
     Rows represent lines (or Dobble cards)
     """
+    project(order)
     
 
 

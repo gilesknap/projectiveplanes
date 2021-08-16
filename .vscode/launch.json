@@ -1,0 +1,13 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "generate",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/planes/__main__.py",
+            "console": "integratedTerminal",
+            "args": ["generate","3"]
+        }
+    ]
+}
