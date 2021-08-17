@@ -1,5 +1,3 @@
-import json
-from pathlib import Path
 from typing import Optional
 
 import typer
@@ -31,16 +29,14 @@ def main(
 
 @cli.command()
 def generate(
-    order: int = typer.Argument(..., help="The order of the projective plane to generate")
+    order: int = typer.Argument(
+        ..., help="The order of the projective plane to generate"
+    )
 ):
     """
-    Generate a projective plane by filling a 2d array.
-    Columns represent points (or Dobble symbols)
-    Rows represent lines (or Dobble cards)
+    Generate a projective plane to assign symbols to cards in the style of Dobble
     """
     project(order)
-    
-
 
 
 # test with:
