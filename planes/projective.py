@@ -26,6 +26,7 @@ def project(order: int):
     add_infinite_incidences(affine_plane_cards, symbols, order)
 
     show_cards(affine_plane_cards)
+    verify(affine_plane_cards)
 
 
 def associate(cards: np.ndarray, symbols: List[Symbol], order: int):
@@ -87,4 +88,24 @@ def show_cards(cards: np.ndarray):
     for x in range(size_x):
         for y in range(size_y):
             card = cards[x, y]
-            print("card", x, y, "symbols:", card.symbols)
+            print(f"card {card.id} ({x}, {y}) symbols: {card.symbols}")
+
+
+def verify(cards: np.ndarray):
+    """
+    verify that every card matches a symbol with each other card
+    exactly once
+    """
+    for card in cards.flatten():
+        for symbol in card.symbols:
+            # todo can I use vectorized vcard to simplify this?
+            matches = []
+            for match_card in cards.flatten():
+                if symbol in match_card.symbols:
+                    matches.append(match_card)
+            matches.remove(card)
+            if len(matches) != 1:
+                print(
+                    f"ERROR: card {card.id} symbol {symbol.id} "
+                    "matches {[m.id for m in matches]}"
+                )

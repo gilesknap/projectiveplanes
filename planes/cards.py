@@ -7,8 +7,8 @@ from planes.symbols import Symbol
 
 class Card:
     """
-  Represents a card containing symbols.
-  """
+    Represents a card containing symbols.
+    """
 
     def __init__(self, identifier: int) -> None:
         self.id: int = identifier
