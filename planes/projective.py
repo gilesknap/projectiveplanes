@@ -2,7 +2,7 @@ from typing import List, Tuple
 
 import numpy as np
 
-from planes.cards import VCard
+from planes.cards import Card, VCard
 from planes.symbols import Symbol
 
 
@@ -23,10 +23,10 @@ def project(order: int):
     symbols = [Symbol(id=i) for i in range(count)]
 
     associate(affine_plane_cards, symbols, order)
-    add_infinite_incidences(affine_plane_cards, symbols, order)
+    all_cards = add_infinite_incidences(affine_plane_cards, symbols, order)
 
-    show_cards(affine_plane_cards)
-    verify(affine_plane_cards)
+    show_cards(all_cards)
+    verify(all_cards)
 
 
 def associate(cards: np.ndarray, symbols: List[Symbol], order: int):
@@ -73,22 +73,31 @@ def add_symbol(
             point = (point + pattern) % (order - 1)
 
 
-def add_infinite_incidences(cards: np.ndarray, symbols: List[Symbol], order: int):
+def add_infinite_incidences(
+    cards: np.ndarray, symbols: List[Symbol], order: int
+) -> List:
     """
     The affine_plane cards reperesent the incendences in finite space. There are
     additional cards of number <order> to add. These represent the incedences at
-    infinity and there is also one more symbol to add to each of the affine_plane
-    cards
+    infinity and there is also one more symbol to add to each of these
     """
-    # todo
+    all_cards = cards.flatten()
+
+    for i in range(order):
+        these_symbols = symbols[i * (order - 1) : (i+1) * (order - 1)] + [symbols[-1]]
+        next_id = len(all_cards)
+        next_card = Card(next_id)
+        next_card.symbols = these_symbols
+
+        all_cards = np.append(all_cards, next_card)
+
+    return all_cards
 
 
 def show_cards(cards: np.ndarray):
-    size_x, size_y = cards.shape
-    for x in range(size_x):
-        for y in range(size_y):
-            card = cards[x, y]
-            print(f"card {card.id} ({x}, {y}) symbols: {card.symbols}")
+    print("\nCARD SUMMARY")
+    for card in cards.flatten():
+        print(f"card {card.id} symbols: {card.symbols}")
 
 
 def verify(cards: np.ndarray):
@@ -97,15 +106,21 @@ def verify(cards: np.ndarray):
     exactly once
     """
     for card in cards.flatten():
-        for symbol in card.symbols:
-            # todo can I use vectorized vcard to simplify this?
+        for match_card in cards.flatten():
+            if match_card.id == card.id:
+                continue
             matches = []
-            for match_card in cards.flatten():
+            for symbol in card.symbols:
                 if symbol in match_card.symbols:
-                    matches.append(match_card)
-            matches.remove(card)
+                    matches.append(symbol)
             if len(matches) != 1:
                 print(
-                    f"ERROR: card {card.id} symbol {symbol.id} "
-                    "matches {[m.id for m in matches]}"
+                    f"ERROR: cards {card.id} and {match_card.id} share symbols "
+                    f"{[m.id for m in matches]}"
                 )
+            else:
+                pass
+                # print(
+                #     f"cards {card.id} and {match_card.id} "
+                #     f"match on {matches[0].id}"
+                #     )
