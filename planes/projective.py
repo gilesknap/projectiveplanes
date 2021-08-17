@@ -1,5 +1,5 @@
 from numpy.core.defchararray import mod
-from planes.cards import Card
+from planes.cards import Card, VCard
 from symbols import Symbol
 import numpy as np
 
@@ -13,7 +13,13 @@ def project(order: int):
     print("number of cards:", count)
 
     # layout most of the cards in square of order - 1
-    affine_plane_cards = np.ndarray([order - 1, order - 1], Card)
+    affine_plane_cards = np.empty([order - 1, order - 1], object)
+    # create an array of incrementing ids for the cards
+    init_arry = np.arange(affine_plane_cards.size).reshape((order - 1, order - 1))
+
+    # use the vectorized contructor to instantiate a VCard in each cell
+    affine_plane_cards[:,:] = VCard(init_arry)
+
     symbols = [Symbol(id=i) for i in range(count)]
 
     associate(affine_plane_cards, symbols, order)
@@ -22,6 +28,8 @@ def project(order: int):
 
 
 def associate(cards: np.ndarray, symbols: List[Symbol], order: int):
+    # generate the patterns for the lines to pass through the square 
+    # arrangement of cards
     patterns = [np.array((1, 0), int)]
     for patnum in range(order - 1):
         patterns.append((patnum, 1))
@@ -54,7 +62,7 @@ def add_symbol(
     for line, start in enumerate(start_points):
         point = start
         for step in range(order - 1):
-            cards[point].symbols += symbols[line]
+            cards[tuple(point)].symbols.append(symbols[line])
             point = (point + pattern) % (order -1)
 
 def show_cards(cards: np.ndarray):
