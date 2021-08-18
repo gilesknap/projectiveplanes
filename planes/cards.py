@@ -11,8 +11,8 @@ class Card:
     Represents a card containing symbols.
     """
 
-    def __init__(self) -> None:
+    def __init__(self, id: int = None, symbols: List[Symbol] = None) -> None:
         global card_num
         # unique id which increments for each instantiation
-        self.id: int = next(card_num)
-        self.symbols: List[Symbol] = []
+        self.id: int = id or next(card_num)
+        self.symbols: List[Symbol] = symbols or []

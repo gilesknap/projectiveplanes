@@ -14,23 +14,23 @@ class Projective:
     def __init__(self, order: int) -> None:
         self.order = order
         # the width of the affine plane cards square
-        self.w = order - 1
+        self.width = order - 1
 
         # count of cards and symbols
         self.count = order ** 2 - order + 1
 
-        # create affine plane cards in square of size order - 1
-        cards = [Card() for i in range(self.w ** 2)]
-        self.affine_plane_cards = np.array(cards, object).reshape(self.w, self.w)
+        # create affine plane cards in square of size width
+        cards = [Card() for i in range(self.width ** 2)]
+        self.affine_plane_cards = np.array(cards, object).reshape(
+            self.width, self.width
+        )
 
         # initialise a set of symbols with unique ids
         self.symbols = [Symbol(id=i) for i in range(self.count)]
 
         # create lists of coords for top row and left column
-        self.left_col = [np.array((0, i), int) for i in range(order - 1)]
-        self.top_row = [np.array((i, 0), int) for i in range(order - 1)]
-
-        print("number of cards:", self.count)
+        self.left_col = [np.array((0, i), int) for i in range(self.width)]
+        self.top_row = [np.array((i, 0), int) for i in range(self.width)]
 
     def project(self):
         """
@@ -50,38 +50,33 @@ class Projective:
         cards in the top row (or left column)
         """
         patterns: List[Tuple[int, int]] = [(1, 0)]
-        for patnum in range(self.order - 1):
+        for patnum in range(self.width):
             patterns.append((patnum, 1))
-        print("line paths:", patterns)
 
         symbol_num = 0
         for pattern in patterns:
-            self.add_symbol(
-                pattern, self.symbols[symbol_num : symbol_num + self.w], self.order
-            )
-            symbol_num += self.w
+            self.add_symbol(pattern, self.symbols[symbol_num : symbol_num + self.width])
+            symbol_num += self.width
 
-    def add_symbol(self, pattern: Tuple[int, int], symbols: List[Symbol], order: int):
+    def add_symbol(self, pattern: Tuple[int, int], symbols: List[Symbol]):
         """
         add a symbol to all cards in the affine grid by following a path described by
         pattern from each starting point along the top row (or left column).
         Each starting point and path gets a symbol, thus this function needs a
-        list of symbols to apply of length order - 1
+        list of symbols to apply of length width
         """
-        print("adding symbols:", symbols)
-
         _, ystep = pattern
         start_points = self.left_col if ystep == 0 else self.top_row
 
         for line, start in enumerate(start_points):
             point = start
-            # each line is order - 1 long and may wrap around the edges of the
+            # each line is width long and may wrap around the edges of the
             # square
-            for step in range(order - 1):
+            for step in range(self.width):
                 self.affine_plane_cards[tuple(point)].symbols.append(symbols[line])
                 # use pattern to move on to the next point in the line
                 # with modulus providing a wrap around
-                point = (point + pattern) % (order - 1)
+                point = (point + pattern) % (self.width)
 
     def add_infinite_incidences(self) -> Any:
         """
@@ -92,17 +87,19 @@ class Projective:
         all_cards = self.affine_plane_cards.flatten()
 
         for i in range(self.order):
-            these_symbols = self.symbols[i * (self.w) : (i + 1) * (self.order - 1)] + [
+            these_symbols = self.symbols[i * (self.width) : (i + 1) * (self.width)] + [
                 self.symbols[-1]
             ]
-            next_card = Card()
-            next_card.symbols = these_symbols
+            next_card = Card(symbols=these_symbols)
 
             all_cards = np.append(all_cards, next_card)
 
         return all_cards
 
     def show_cards(self, cards):
+        """
+        ouput a representation of the card deck
+        """
         print("\nCARD SUMMARY")
         for card in cards.flatten():
             print(f"card {card.id} symbols: {card.symbols}")
@@ -125,9 +122,3 @@ class Projective:
                         f"ERROR: cards {card.id} and {match_card.id} share symbols "
                         f"{[m.id for m in matches]}"
                     )
-                else:
-                    pass
-                    # print(
-                    #     f"cards {card.id} and {match_card.id} "
-                    #     f"match on {matches[0].id}"
-                    #     )
