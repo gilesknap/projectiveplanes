@@ -26,9 +26,6 @@ jobs:
           pip install pipenv twine
           pipenv install --dev --deploy --python $(which python) && pipenv graph
 
-      - name: Check wheel version is specified
-        run: grep '"wheel":' Pipfile.lock
-
       - name: Create Sdist and Wheel
         # for reproducible builds set SOURCE_DATE_EPOCH to the date of the last commit
         # See here for more info : https://reproducible-builds.org/
