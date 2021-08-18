@@ -26,8 +26,6 @@ autopep8 = "*"
 planes = {editable = true,path = "."}
 typer = "*"
 numpy = "*"
-dataclasses = "*"
-types-dataclasses = "*"
 
 [scripts]
 tests = "python -m pytest"
