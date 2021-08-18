@@ -3,7 +3,7 @@ from typing import Optional
 import typer
 
 from planes import __version__
-from planes.projective import project
+from planes.projective import Projective
 
 cli = typer.Typer()
 
@@ -24,7 +24,7 @@ def main(
         help="Print the version of planes and exit",
     )
 ):
-    """Do stuff ..."""
+    """ main entry point for typer cli """
 
 
 @cli.command()
@@ -36,7 +36,8 @@ def generate(
     """
     Generate a projective plane to assign symbols to cards in the style of Dobble
     """
-    project(order)
+    p = Projective(order)
+    p.project()
 
 
 # test with:

@@ -1,8 +1,9 @@
+from itertools import count
 from typing import List
 
-import numpy as np
-
 from planes.symbols import Symbol
+
+card_num = count()
 
 
 class Card:
@@ -10,10 +11,8 @@ class Card:
     Represents a card containing symbols.
     """
 
-    def __init__(self, identifier: int) -> None:
-        self.id: int = identifier
+    def __init__(self) -> None:
+        global card_num
+        # unique id which increments for each instantiation
+        self.id: int = next(card_num)
         self.symbols: List[Symbol] = []
-
-
-# vectorize Card so that it can be constructed across a numpy array of VCard
-VCard = np.vectorize(Card)
