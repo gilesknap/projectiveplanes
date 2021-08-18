@@ -109,6 +109,7 @@ class Projective:
         verify that every card matches a symbol with each other card
         exactly once
         """
+        result = True
         for card in cards.flatten():
             for match_card in cards.flatten():
                 if match_card.id == card.id:
@@ -122,3 +123,5 @@ class Projective:
                         f"ERROR: cards {card.id} and {match_card.id} share symbols "
                         f"{[m.id for m in matches]}"
                     )
+                    result = False
+        return result
