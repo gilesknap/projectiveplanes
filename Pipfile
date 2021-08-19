@@ -23,9 +23,10 @@ autopep8 = "*"
 
 [packages]
 # All other package requirements from setup.cfg
-planes = {editable = true,path = "."}
 typer = "*"
 numpy = "*"
+bokeh = "*"
+planes = {editable = true, path = "."}
 
 [scripts]
 tests = "python -m pytest"

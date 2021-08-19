@@ -4,6 +4,7 @@ import typer
 
 from planes import __version__
 from planes.projective import Projective
+from planes.plot import plot_cards
 
 cli = typer.Typer()
 
@@ -38,6 +39,11 @@ def generate(
     """
     p = Projective(order)
     p.project()
+
+
+@cli.command()
+def test_plot():
+    plot_cards(4)
 
 
 # test with:
